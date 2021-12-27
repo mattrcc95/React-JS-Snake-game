@@ -1,4 +1,5 @@
 import { Container } from "reactstrap";
+import Cell from "./Cell";
 
 const snakeGrid = {
   maxWidth: '70vw',
@@ -12,7 +13,7 @@ const snakeGrid = {
 function App() {
   return (
     <Container style = {snakeGrid}>
-      <div>merda</div>
+      <Cell></Cell>
     </Container>
   );
 }
