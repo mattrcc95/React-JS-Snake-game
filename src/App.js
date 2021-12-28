@@ -5,6 +5,11 @@ import Grid from "./component/Grid";
 
 const nRows = 10
 const nCols = 10
+const upperBoundary = Array.from({ length: nCols }, (_value, index) => (index + 1))
+const bottomBoundary = upperBoundary.map(value => value + nCols * (nRows - 1))
+const rightBoundary = Array.from({ length: nRows }, (_value, index) => (index + 1) * nCols)
+const leftBoundary = rightBoundary.map(value => value - nCols + 1)
+
 const containerGrid = {
   maxWidth: '30vw',
   minHeight: '75vh',
@@ -26,23 +31,38 @@ const getRandomInt = (max, excluded = 0) => {
 
 
 function App() {
-  const [head, setHead] = useState(getRandomInt(100))
-  const [food, setFood] = useState(getRandomInt(100, head))
+  const [head, setHead] = useState({ value: getRandomInt(100), impulse: null })
+  const [food, setFood] = useState(getRandomInt(100, head.value))
 
   const moveHead = (event) => {
-    console.log(event.key)
     switch (event.key) {
       case 'ArrowLeft':
-        setHead(head - 1)
+        if (leftBoundary.includes(head.value)) {
+          setHead({ value: head.value + (nCols - 1), impulse: 'ArrowLeft' })
+        } else {
+          setHead({ value: head.value - 1, impulse: 'ArrowLeft' })
+        }
         break
       case 'ArrowRight':
-        setHead(head + 1)
+        if (rightBoundary.includes(head.value)) {
+          setHead({ value: head.value - (nCols - 1), impulse: 'ArrowRight' })
+        } else {
+          setHead({ value: head.value + 1, impulse: 'ArrowRight' })
+        }
         break
       case 'ArrowUp':
-        setHead(head - 10)
+        if (upperBoundary.includes(head.value)) {
+          setHead({ value: head.value + (nCols * (nRows - 1)), impulse: 'ArrowUp' })
+        } else {
+          setHead({ value: head.value - nRows, impulse: 'ArrowUp' })
+        }
         break
       case 'ArrowDown':
-        setHead(head + 10)
+        if (bottomBoundary.includes(head.value)) {
+          setHead({ value: head.value - (nCols * (nRows - 1)), impulse: 'ArrowDown' })
+        } else {
+          setHead({ value: head.value + nRows, impulse: 'ArrowDown' })
+        }
         break
       default:
         break
@@ -50,10 +70,10 @@ function App() {
   }
 
   useEffect(() => {
-    window.addEventListener('keydown', moveHead)
-    if(food === head){
-      setFood(getRandomInt(100, head))
+    if (food === head.value) {
+      setFood(getRandomInt(100, head.value))
     }
+    window.addEventListener('keydown', moveHead)
     return () => { window.removeEventListener('keydown', moveHead) }
   }, [head])
 

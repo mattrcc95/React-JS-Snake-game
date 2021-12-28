@@ -5,7 +5,7 @@ import { SquareModel } from '../model/SquareModel'
 export default function Grid({ nRows, nCols, head, food }) {
     const assignSquareModel = (index) => {
         switch(index){
-            case head:
+            case head.value:
                 return new SquareModel(index, true, false)
             case food:
                 return new SquareModel(index, false, true)
