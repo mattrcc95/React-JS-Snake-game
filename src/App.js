@@ -2,23 +2,8 @@ import React, { useState } from "react";
 import { useEffect } from "react/cjs/react.development";
 import { Container } from "reactstrap";
 import Grid from "./component/Grid";
-
-const nRows = 10
-const nCols = 10
-const upperBoundary = Array.from({ length: nCols }, (_value, index) => (index + 1))
-const bottomBoundary = upperBoundary.map(value => value + nCols * (nRows - 1))
-const rightBoundary = Array.from({ length: nRows }, (_value, index) => (index + 1) * nCols)
-const leftBoundary = rightBoundary.map(value => value - nCols + 1)
-
-const containerGrid = {
-  maxWidth: '30vw',
-  minHeight: '75vh',
-  display: 'grid',
-  paddingTop: '20vh',
-  margin: 'auto',
-  gridTemplateColumns: 'repeat(10, 1fr)',
-  gridTemplateRows: 'repeat(10, 1fr)'
-}
+import * as constants from './utils/constants.js'
+import * as style from './style.js'
 
 const getRandomInt = (max, excluded = 0) => {
   const value = 1 + Math.floor(Math.random() * max)
@@ -31,37 +16,41 @@ const getRandomInt = (max, excluded = 0) => {
 
 
 function App() {
-  const [head, setHead] = useState({ value: getRandomInt(100), impulse: null })
-  const [food, setFood] = useState(getRandomInt(100, head.value))
+  const [snake, setSnake] = useState({ body: [getRandomInt(100)], impulse: null })
+  const [food, setFood] = useState(getRandomInt(100, snake.body))
 
-  const moveHead = (event) => {
+  useEffect(() => {
+    console.log(snake.body)
+  }, [])
+
+  const moveSnake = (event) => {
     switch (event.key) {
       case 'ArrowLeft':
-        if (leftBoundary.includes(head.value)) {
-          setHead({ value: head.value + (nCols - 1), impulse: 'ArrowLeft' })
+        if (constants.leftBoundary.includes(snake.body[0])) {
+          setSnake({ body: snake.body.map(value => value + (constants.nCols - 1)), impulse: 'ArrowLeft' })
         } else {
-          setHead({ value: head.value - 1, impulse: 'ArrowLeft' })
+          setSnake({ body: snake.body.map(value => value - 1), impulse: 'ArrowLeft' })
         }
         break
       case 'ArrowRight':
-        if (rightBoundary.includes(head.value)) {
-          setHead({ value: head.value - (nCols - 1), impulse: 'ArrowRight' })
+        if (constants.rightBoundary.includes(snake.body[0])) {
+          setSnake({ body: snake.body.map(value => value - (constants.nCols - 1)), impulse: 'ArrowRight' })
         } else {
-          setHead({ value: head.value + 1, impulse: 'ArrowRight' })
+          setSnake({ body: snake.body.map(value => value + 1), impulse: 'ArrowRight' })
         }
         break
       case 'ArrowUp':
-        if (upperBoundary.includes(head.value)) {
-          setHead({ value: head.value + (nCols * (nRows - 1)), impulse: 'ArrowUp' })
+        if (constants.upperBoundary.includes(snake.body[0])) {
+          setSnake({ body: snake.body.map(value => value + (constants.nCols * (constants.nRows - 1))), impulse: 'ArrowUp' })
         } else {
-          setHead({ value: head.value - nRows, impulse: 'ArrowUp' })
+          setSnake({ body: snake.body.map(value => value - constants.nRows), impulse: 'ArrowUp' })
         }
         break
       case 'ArrowDown':
-        if (bottomBoundary.includes(head.value)) {
-          setHead({ value: head.value - (nCols * (nRows - 1)), impulse: 'ArrowDown' })
+        if (constants.bottomBoundary.includes(snake.body[0])) {
+          setSnake({ body: snake.body.map(value => value - (constants.nCols * (constants.nRows - 1))), impulse: 'ArrowDown' })
         } else {
-          setHead({ value: head.value + nRows, impulse: 'ArrowDown' })
+          setSnake({ body: snake.body.map(value => value + constants.nRows), impulse: 'ArrowDown' })
         }
         break
       default:
@@ -70,19 +59,19 @@ function App() {
   }
 
   useEffect(() => {
-    if (food === head.value) {
-      setFood(getRandomInt(100, head.value))
+    if (food === snake.body[0]) {
+      setFood(getRandomInt(100, snake.body))
     }
-    window.addEventListener('keydown', moveHead)
-    return () => { window.removeEventListener('keydown', moveHead) }
-  }, [head])
+    window.addEventListener('keydown', moveSnake)
+    return () => { window.removeEventListener('keydown', moveSnake) }
+  }, [snake])
 
   return (
     <Container
       autoFocus='autofocus'
-      style={containerGrid}
+      style={style.containerGrid}
       tabIndex='1'>
-      <Grid nRows={nRows} nCols={nCols} head={head} food={food} />
+      <Grid nRows={constants.nRows} nCols={constants.nCols} snake={snake} food={food} />
     </Container>
   )
 

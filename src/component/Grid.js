@@ -2,10 +2,10 @@ import React from 'react'
 import Square from './Square'
 import { SquareModel } from '../model/SquareModel'
 
-export default function Grid({ nRows, nCols, head, food }) {
+export default function Grid({ nRows, nCols, snake, food }) {
     const assignSquareModel = (index) => {
         switch(index){
-            case head.value:
+            case snake.body[0]:
                 return new SquareModel(index, true, false)
             case food:
                 return new SquareModel(index, false, true)
