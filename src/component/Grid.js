@@ -2,21 +2,20 @@ import React from 'react'
 import Square from './Square'
 import { SquareModel } from '../model/SquareModel'
 
-export default function Grid({ nRows, nCols, head, food }) {
+export default function Grid({ nRows, nCols, head, snake, food }) {
     const assignSquareModel = (index) => {
-/*         if (snake.body.map(obj => obj.node).includes(index)) {
-            return new SquareModel(index, true, false)
-        } else { */
-            console.log(head)
+        if (snake.includes(index)) {
+            return new SquareModel(index, false, true, false)
+        } else {
             switch (index) {
                 case head:
-                    return new SquareModel(index, true, false)
+                    return new SquareModel(index, true, false, false)
                 case food:
-                    return new SquareModel(index, false, true)
+                    return new SquareModel(index, false, false, true)
                 default:
-                    return new SquareModel(index, false, false)
+                    return new SquareModel(index, false, false, false)
             }
-/*         } */
+        }
     }
 
     const initializeGrid = () =>

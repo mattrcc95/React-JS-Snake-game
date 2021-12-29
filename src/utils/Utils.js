@@ -8,3 +8,12 @@ export const pbcLeftRight = (nCols - 1)
 export const pbcUpDown = nCols * (nRows - 1)
 export const defaultLeftRight = 1
 export const defaultUpDown = nRows 
+
+export const getRandomInt = (max, ...excluded) => {
+    const value = 1 + Math.floor(Math.random() * max)
+    if (!excluded.includes(value)) {
+      return value
+    } else {
+      return getRandomInt(max, ...excluded)
+    }
+  }

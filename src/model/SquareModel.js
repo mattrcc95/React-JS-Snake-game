@@ -1,7 +1,8 @@
 export class SquareModel {
-    constructor(id, isSnake, isFood) {
+    constructor(id, isHead, isBody, isFood) {
       this.id = id
-      this.isSnake = isSnake
+      this.isHead = isHead
+      this.isBody = isBody
       this.isFood = isFood
     }
     

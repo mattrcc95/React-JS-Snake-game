@@ -18,7 +18,15 @@ export const containerGrid = {
     textAlign: 'center'
 }
 
-export const snakeSquare = {
+export const bodySquare = {
+    background: '#FF7F50',
+    display: 'grid',
+    boxSizing: 'border-box',
+    border: '2px solid #000000 ',
+    textAlign: 'center'
+}
+
+export const headSquare = {
     background: '#FF0000',
     display: 'grid',
     boxSizing: 'border-box',
