@@ -14,28 +14,21 @@ const getRandomInt = (max, ...excluded) => {
   }
 }
 
-
 function App() {
-  const [snake, setSnake] =
-    useState(
-      {
-        body: [{ value: getRandomInt(constants.nRows * constants.nCols, []), nextToVisit: null }],
-        nextToAdd: null
-      }
-    )
-  const [food, setFood] = useState(getRandomInt(constants.nRows * constants.nCols, snake.body.map(obj => { return obj.value })))
+  const [snake, setSnake] = useState({ body: [getRandomInt(constants.nRows * constants.nCols, [])], nextToAdd: null })
+  const [food, setFood] = useState(getRandomInt(constants.nRows * constants.nCols, snake.body))
 
   const controlSnake = (event) => {
     switch (event.key) {
       case 'ArrowLeft':
-        if (constants.leftBoundary.includes(snake.body[0].value)) {
+        if (constants.leftBoundary.includes(snake.body[0])) {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value + (constants.nCols - 1), nextToVisit: null }
+                  return value + (constants.nCols - 1)
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -43,11 +36,11 @@ function App() {
         } else {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value - 1, nextToVisit: null }
+                  return value - 1
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -55,14 +48,14 @@ function App() {
         }
         break
       case 'ArrowRight':
-        if (constants.rightBoundary.includes(snake.body[0].value)) {
+        if (constants.rightBoundary.includes(snake.body[0])) {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value - (constants.nCols - 1), nextToVisit: null }
+                  return value - (constants.nCols - 1)
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -70,11 +63,11 @@ function App() {
         } else {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value + 1, nextToVisit: null }
+                  return value + 1
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -82,14 +75,14 @@ function App() {
         }
         break
       case 'ArrowUp':
-        if (constants.upperBoundary.includes(snake.body[0].value)) {
+        if (constants.upperBoundary.includes(snake.body[0])) {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value + (constants.nCols * (constants.nRows - 1)), nextToVisit: null }
+                  return value + (constants.nCols * (constants.nRows - 1))
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -97,11 +90,11 @@ function App() {
         } else {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value - constants.nRows, nextToVisit: null }
+                  return value - constants.nRows
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -109,14 +102,14 @@ function App() {
         }
         break
       case 'ArrowDown':
-        if (constants.bottomBoundary.includes(snake.body[0].value)) {
+        if (constants.bottomBoundary.includes(snake.body[0])) {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value - (constants.nCols * (constants.nRows - 1)), nextToVisit: null }
+                  return value - (constants.nCols * (constants.nRows - 1))
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -124,11 +117,11 @@ function App() {
         } else {
           setSnake
             ({
-              body: snake.body.map(function (obj, index) {
+              body: snake.body.map(function (value, index) {
                 if (index === 0) {
-                  return { value: obj.value + constants.nRows, nextToVisit: null }
+                  return value + constants.nRows
                 } else {
-                  return { value: snake.body[index - 1].value, nextToVisit: null }
+                  return snake.body[index - 1]
                 }
               }),
               nextToAdd: snake.body[snake.body.length - 1]
@@ -141,13 +134,16 @@ function App() {
   }
 
   useEffect(() => {
-    if (food === snake.body[0].value) {
-      snake.body.push(snake.nextToAdd)
-      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body.map(obj => obj.value )))
-    }
     window.addEventListener('keydown', controlSnake)
-    console.log(snake)
     return () => { window.removeEventListener('keydown', controlSnake) }
+  }, [snake])
+
+  useEffect(() => {
+    console.log(snake.body)
+    if (food === snake.body[0]) {
+      snake.body.push(snake.nextToAdd)
+      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
+    }
   }, [snake])
 
   return (

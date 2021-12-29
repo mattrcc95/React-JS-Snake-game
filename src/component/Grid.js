@@ -6,7 +6,7 @@ import { useEffect } from 'react/cjs/react.development'
 export default function Grid({ nRows, nCols, snake, food }) {
 
     const assignSquareModel = (index) => {
-        if (snake.body.map(obj => obj.value).includes(index)) {
+        if (snake.body.includes(index)) {
             return new SquareModel(index, true, false)
         } else {
             switch (index) {
