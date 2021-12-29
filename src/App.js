@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useEffect } from "react/cjs/react.development";
 import { Container } from "reactstrap";
 import Grid from "./component/Grid";
-import * as constants from './utils/constants.js'
+import * as constants from './utils/Constants.js'
 import * as style from './style.js'
 
 const getRandomInt = (max, ...excluded) => {
@@ -21,66 +21,35 @@ function App() {
   //const [food, setFood] = useState(getRandomInt(constants.nRows * constants.nCols, snake.body))
   const [food, setFood] = useState(getRandomInt(constants.nRows * constants.nCols, [head]))
 
-  const doPBStrategy = (direction) => {
-    switch (direction) {
-      case 'left':
-        setHead(head + constants.pbcLeftRight)
-        break
-      case 'right':
-        setHead(head - constants.pbcLeftRight)
-        break
-      case 'up':
-        setHead(head + constants.pbcUpDown)
-        break
-      case 'down':
-        setHead(head - constants.pbcUpDown)
-        break
-      default:
-        break
-    }
-  }
-
-  const doDefaultStrategy = (direction) => {
-    switch (direction) {
-      case 'left':
-        setHead(head - constants.defaultLeftRight)
-        break
-      case 'right':
-        setHead(head + constants.defaultLeftRight)
-        break
-      case 'up':
-        setHead(head - constants.defaultUpDown)
-        break
-      case 'down':
-        setHead(head + constants.defaultUpDown)
-        break
-      default:
-        break
-    }
-  }
-
-  const defaultOrPBmovement = (isDefault, direction) => {
-    if (isDefault) {
-      doDefaultStrategy(direction)
-    } else {
-      doPBStrategy(direction)
-    }
-  }
-
   const moveHead = (event) => {
-    console.log('head from function:', head)
     switch (event.key) {
       case 'ArrowLeft':
-        defaultOrPBmovement(!constants.leftBoundary.includes(head.value), 'left')
+        if (constants.leftBoundary.includes(head.value)) {
+          setHead(head.value + constants.pbcLeftRight)
+        } else {
+          setHead(head.value - constants.defaultLeftRight)
+        }
         break
       case 'ArrowRight':
-        defaultOrPBmovement(!constants.rightBoundary.includes(head.value), 'right')
+        if (constants.rightBoundary.includes(head.value)) {
+          setHead(head.value - constants.pbcLeftRight)
+        } else {
+          setHead(head.value + constants.defaultLeftRight)
+        }
         break
       case 'ArrowUp':
-        defaultOrPBmovement(!constants.upperBoundary.includes(head.value), 'up')
+        if (constants.upperBoundary.includes(head.value)) {
+          setHead(head.value + constants.pbcUpDown)
+        } else {
+          setHead(head.value - constants.defaultUpDown)
+        }
         break
       case 'ArrowDown':
-        defaultOrPBmovement(!constants.bottomBoundary.includes(head.value), 'down')
+        if (constants.bottomBoundary.includes(head.value)) {
+          setHead(head.value - constants.pbcUpDown)
+        } else {
+          setHead(head.value + constants.defaultUpDown)
+        }
         break
       default:
         break
@@ -116,7 +85,7 @@ function App() {
 
   return (
     <Container style={style.containerGrid}>
-      <Grid nRows={constants.nRows} nCols={constants.nCols} head={head} snake={[head]} food={food} />
+      <Grid nRows={constants.nRows} nCols={constants.nCols} head={head} food={food} />
     </Container>
   )
 
