@@ -24,31 +24,31 @@ function App() {
   const moveHead = (event) => {
     switch (event.key) {
       case 'ArrowLeft':
-        if (constants.leftBoundary.includes(head.value)) {
-          setHead(head.value + constants.pbcLeftRight)
+        if (constants.leftBoundary.includes(head)) {
+          setHead(head + constants.pbcLeftRight)
         } else {
-          setHead(head.value - constants.defaultLeftRight)
+          setHead(head - constants.defaultLeftRight)
         }
         break
       case 'ArrowRight':
-        if (constants.rightBoundary.includes(head.value)) {
-          setHead(head.value - constants.pbcLeftRight)
+        if (constants.rightBoundary.includes(head)) {
+          setHead(head - constants.pbcLeftRight)
         } else {
-          setHead(head.value + constants.defaultLeftRight)
+          setHead(head + constants.defaultLeftRight)
         }
         break
       case 'ArrowUp':
-        if (constants.upperBoundary.includes(head.value)) {
-          setHead(head.value + constants.pbcUpDown)
+        if (constants.upperBoundary.includes(head)) {
+          setHead(head + constants.pbcUpDown)
         } else {
-          setHead(head.value - constants.defaultUpDown)
+          setHead(head - constants.defaultUpDown)
         }
         break
       case 'ArrowDown':
-        if (constants.bottomBoundary.includes(head.value)) {
-          setHead(head.value - constants.pbcUpDown)
+        if (constants.bottomBoundary.includes(head)) {
+          setHead(head - constants.pbcUpDown)
         } else {
-          setHead(head.value + constants.defaultUpDown)
+          setHead(head + constants.defaultUpDown)
         }
         break
       default:

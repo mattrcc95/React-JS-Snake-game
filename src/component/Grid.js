@@ -1,14 +1,13 @@
 import React from 'react'
 import Square from './Square'
 import { SquareModel } from '../model/SquareModel'
-import { useEffect } from 'react/cjs/react.development'
 
 export default function Grid({ nRows, nCols, head, food }) {
-
     const assignSquareModel = (index) => {
 /*         if (snake.body.map(obj => obj.node).includes(index)) {
             return new SquareModel(index, true, false)
         } else { */
+            console.log(head)
             switch (index) {
                 case head:
                     return new SquareModel(index, true, false)
