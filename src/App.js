@@ -5,13 +5,16 @@ import Grid from "./component/Grid";
 import * as constants from './utils/Constants.js'
 import * as style from './style.js'
 
-const getRandomInt = (max, ...excluded) => {
-  const value = 1 + Math.floor(Math.random() * max)
-  if (!excluded.includes(value)) {
-    return value
-  } else {
-    return getRandomInt(max, ...excluded)
+const getRandomInt = (max, excluded) => {
+  var result = 0
+  while (true) {
+    result = 1 + Math.floor(Math.random() * max)
+    if (!excluded.includes(result)) {
+      break
+    }
   }
+  console.log('random', result)
+  return result
 }
 
 function App() {
