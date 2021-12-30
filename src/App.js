@@ -4,6 +4,7 @@ import { Container } from "reactstrap";
 import Grid from "./component/Grid";
 import * as constants from './utils/Constants.js'
 import * as style from './style.js'
+import Score from "./component/Score";
 
 const getRandomInt = (max, excluded) => {
   var result = 0
@@ -13,13 +14,13 @@ const getRandomInt = (max, excluded) => {
       break
     }
   }
-  console.log('random', result)
   return result
 }
 
 function App() {
   const [snake, setSnake] = useState({ body: [getRandomInt(constants.nRows * constants.nCols, [])], nextToAdd: null })
   const [food, setFood] = useState(getRandomInt(constants.nRows * constants.nCols, snake.body))
+  const [score, setScore] = useState({ current: 0, best: 0 })
 
   const controlSnake = (event) => {
     switch (event.key) {
@@ -136,27 +137,57 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    window.addEventListener('keydown', controlSnake)
-    return () => { window.removeEventListener('keydown', controlSnake) }
-  }, [snake])
+  const updateScore = () => {
+    if (score.current >= score.best) {
+      setScore({ current: score.current + 1, best: score.current + 1 })
+    } else {
+      setScore({ current: score.current + 1, best: score.best })
+    }
+  }
+
+  const storeBestScoreAndReset = () => {
+    if (score.current >= score.best) {
+      setScore({ current: 0, best: score.current })
+      sessionStorage.setItem(constants.SCORE_KEY, JSON.stringify(score.current))
+    } else {
+      setScore({ current: 0, best: score.best })
+    }
+  }
 
   useEffect(() => {
+    const retrieved = sessionStorage.getItem(constants.SCORE_KEY)
+    if(retrieved){
+      setScore({current: 0, best: JSON.parse(retrieved)})
+    }
+  }, [])
+  
+  useEffect(() => {
+    window.addEventListener('keydown', controlSnake)
+
     const [first, ...rest] = snake.body
+    if (rest.includes(first)) {
+      storeBestScoreAndReset()
+      setSnake({ body: [getRandomInt(constants.nCols * constants.nRows, [])], nextToAdd: null })
+      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
+    }
     if (food === snake.body[0]) {
+      updateScore()
       snake.body.push(snake.nextToAdd)
       setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
     }
-    if(rest.includes(first)){
-      setSnake({body: [getRandomInt(constants.nCols * constants.nRows, [])], nextToAdd: null})
-      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
-    }
+
+    return () => { window.removeEventListener('keydown', controlSnake) }
   }, [snake])
 
   return (
-    <Container style={style.containerGrid}>
-      <Grid nRows={constants.nRows} nCols={constants.nCols} snake={snake} food={food} />
-    </Container>
+    <>
+      <Container style={style.scoreGrid}>
+        <Score score={score}></Score>
+      </Container>
+      <Container style={style.containerGrid}>
+        <Grid nRows={constants.nRows} nCols={constants.nCols} snake={snake} food={food} />
+      </Container>
+    </>
   )
 
 }
