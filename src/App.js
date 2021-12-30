@@ -142,9 +142,13 @@ function App() {
   }, [snake])
 
   useEffect(() => {
-    console.log(snake.body)
+    const [first, ...rest] = snake.body
     if (food === snake.body[0]) {
       snake.body.push(snake.nextToAdd)
+      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
+    }
+    if(rest.includes(first)){
+      setSnake({body: [getRandomInt(constants.nCols * constants.nRows, [])], nextToAdd: null})
       setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
     }
   }, [snake])
