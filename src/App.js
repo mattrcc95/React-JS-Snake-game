@@ -6,10 +6,13 @@ import * as utils from './utils/Utils.js'
 import * as style from './style.js'
 import Score from "./component/Score";
 
+var timeoutId
+
 function App() {
   const [snake, setSnake] = useState({ body: [utils.getRandomInt(utils.nRows * utils.nCols, [])], nextToAdd: null })
   const [food, setFood] = useState(utils.getRandomInt(utils.nRows * utils.nCols, snake.body))
   const [score, setScore] = useState({ current: 0, best: 0 })
+  const [impulses, setImpulses] = useState([])
 
   const updateScore = () => {
     if (score.current >= score.best) {
@@ -53,6 +56,9 @@ function App() {
 
 
   const controlSnake = (event) => {
+    if (event.key != impulses[impulses.length - 1]) {
+      impulses.push(event.key)
+    }
     switch (event.key) {
       case 'ArrowLeft':
         moveSnake(utils.leftBoundary, - 1, (utils.nCols - 1))
@@ -77,25 +83,38 @@ function App() {
       setScore({ current: 0, best: JSON.parse(retrieved) })
     }
   }, [])
-
+  
   useEffect(() => {
+    if(timeoutId){
+      clearTimeout(timeoutId)
+    }
     window.addEventListener('keydown', controlSnake)
-
+    
     const [first, ...rest] = snake.body
     if (rest.includes(first)) {
       storeBestScoreAndReset()
       setSnake({ body: [utils.getRandomInt(utils.nCols * utils.nRows, [])], nextToAdd: null })
       setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
+      setImpulses([])
     }
     if (food === first) {
       updateScore()
       snake.body.push(snake.nextToAdd)
       setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
     }
-
+    
     return () => { window.removeEventListener('keydown', controlSnake) }
   }, [snake])
-
+  
+  useEffect(() => {
+    if (impulses[impulses.length - 1] !== undefined) {
+      console.log(impulses[impulses.length - 1])
+      timeoutId = setTimeout(function () {
+        controlSnake(new KeyboardEvent('keydown', { 'key': impulses[impulses.length - 1] }))
+      }, 300)
+    }
+  }, [snake])
+  
   return (
     <>
       <Container style={style.scoreGrid}>
