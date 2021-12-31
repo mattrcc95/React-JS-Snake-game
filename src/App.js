@@ -28,24 +28,24 @@ function App() {
     }
   }
 
-  const followMovingShiftRule = (shift) => 
+  const getShiftedBody = (shift) =>
     snake.body.map(function (value, index) {
       if (index === 0) {
-        return value + shift;
+        return value + shift
       } else {
-        return snake.body[index - 1];
+        return snake.body[index - 1]
       }
     })
 
   const moveSnake = (boundary, defaultShift, PBCshift) => {
     if (boundary.includes(snake.body[0])) {
       setSnake({
-        body: followMovingShiftRule(PBCshift),
+        body: getShiftedBody(PBCshift),
         nextToAdd: snake.body[snake.body.length - 1]
       });
     } else {
       setSnake({
-        body: followMovingShiftRule(defaultShift),
+        body: getShiftedBody(defaultShift),
         nextToAdd: snake.body[snake.body.length - 1]
       });
     }
@@ -87,7 +87,7 @@ function App() {
       setSnake({ body: [utils.getRandomInt(utils.nCols * utils.nRows, [])], nextToAdd: null })
       setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
     }
-    if (food === snake.body[0]) {
+    if (food === first) {
       updateScore()
       snake.body.push(snake.nextToAdd)
       setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
@@ -102,7 +102,7 @@ function App() {
         <Score score={score}></Score>
       </Container>
       <Container style={style.containerGrid}>
-        <Grid nRows={utils.nRows} nCols={utils.nCols} snake={snake} food={food} />
+        <Grid nRows={utils.nRows} nCols={utils.nCols} body={snake.body} food={food} />
       </Container>
     </>
   )
