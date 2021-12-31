@@ -2,140 +2,14 @@ import React, { useState } from "react";
 import { useEffect } from "react/cjs/react.development";
 import { Container } from "reactstrap";
 import Grid from "./component/Grid";
-import * as constants from './utils/Constants.js'
+import * as utils from './utils/Utils.js'
 import * as style from './style.js'
 import Score from "./component/Score";
 
-const getRandomInt = (max, excluded) => {
-  var result = 0
-  while (true) {
-    result = 1 + Math.floor(Math.random() * max)
-    if (!excluded.includes(result)) {
-      break
-    }
-  }
-  return result
-}
-
 function App() {
-  const [snake, setSnake] = useState({ body: [getRandomInt(constants.nRows * constants.nCols, [])], nextToAdd: null })
-  const [food, setFood] = useState(getRandomInt(constants.nRows * constants.nCols, snake.body))
+  const [snake, setSnake] = useState({ body: [utils.getRandomInt(utils.nRows * utils.nCols, [])], nextToAdd: null })
+  const [food, setFood] = useState(utils.getRandomInt(utils.nRows * utils.nCols, snake.body))
   const [score, setScore] = useState({ current: 0, best: 0 })
-
-  const controlSnake = (event) => {
-    switch (event.key) {
-      case 'ArrowLeft':
-        if (constants.leftBoundary.includes(snake.body[0])) {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value + (constants.nCols - 1)
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        } else {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value - 1
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        }
-        break
-      case 'ArrowRight':
-        if (constants.rightBoundary.includes(snake.body[0])) {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value - (constants.nCols - 1)
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        } else {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value + 1
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        }
-        break
-      case 'ArrowUp':
-        if (constants.upperBoundary.includes(snake.body[0])) {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value + (constants.nCols * (constants.nRows - 1))
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        } else {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value - constants.nRows
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        }
-        break
-      case 'ArrowDown':
-        if (constants.bottomBoundary.includes(snake.body[0])) {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value - (constants.nCols * (constants.nRows - 1))
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        } else {
-          setSnake
-            ({
-              body: snake.body.map(function (value, index) {
-                if (index === 0) {
-                  return value + constants.nRows
-                } else {
-                  return snake.body[index - 1]
-                }
-              }),
-              nextToAdd: snake.body[snake.body.length - 1]
-            })
-        }
-        break
-      default:
-        break
-    }
-  }
 
   const updateScore = () => {
     if (score.current >= score.best) {
@@ -148,32 +22,75 @@ function App() {
   const storeBestScoreAndReset = () => {
     if (score.current >= score.best) {
       setScore({ current: 0, best: score.current })
-      sessionStorage.setItem(constants.SCORE_KEY, JSON.stringify(score.current))
+      sessionStorage.setItem(utils.SCORE_KEY, JSON.stringify(score.current))
     } else {
       setScore({ current: 0, best: score.best })
     }
   }
 
+  const followMovingShiftRule = (shift) => 
+    snake.body.map(function (value, index) {
+      if (index === 0) {
+        return value + shift;
+      } else {
+        return snake.body[index - 1];
+      }
+    })
+
+  const moveSnake = (boundary, defaultShift, PBCshift) => {
+    if (boundary.includes(snake.body[0])) {
+      setSnake({
+        body: followMovingShiftRule(PBCshift),
+        nextToAdd: snake.body[snake.body.length - 1]
+      });
+    } else {
+      setSnake({
+        body: followMovingShiftRule(defaultShift),
+        nextToAdd: snake.body[snake.body.length - 1]
+      });
+    }
+  }
+
+
+  const controlSnake = (event) => {
+    switch (event.key) {
+      case 'ArrowLeft':
+        moveSnake(utils.leftBoundary, - 1, (utils.nCols - 1))
+        break
+      case 'ArrowRight':
+        moveSnake(utils.rightBoundary, + 1, - (utils.nCols - 1))
+        break
+      case 'ArrowUp':
+        moveSnake(utils.upperBoundary, - utils.nRows, (utils.nCols * (utils.nRows - 1)))
+        break
+      case 'ArrowDown':
+        moveSnake(utils.bottomBoundary, utils.nRows, - (utils.nCols * (utils.nRows - 1)))
+        break
+      default:
+        break
+    }
+  }
+
   useEffect(() => {
-    const retrieved = sessionStorage.getItem(constants.SCORE_KEY)
-    if(retrieved){
-      setScore({current: 0, best: JSON.parse(retrieved)})
+    const retrieved = sessionStorage.getItem(utils.SCORE_KEY)
+    if (retrieved) {
+      setScore({ current: 0, best: JSON.parse(retrieved) })
     }
   }, [])
-  
+
   useEffect(() => {
     window.addEventListener('keydown', controlSnake)
 
     const [first, ...rest] = snake.body
     if (rest.includes(first)) {
       storeBestScoreAndReset()
-      setSnake({ body: [getRandomInt(constants.nCols * constants.nRows, [])], nextToAdd: null })
-      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
+      setSnake({ body: [utils.getRandomInt(utils.nCols * utils.nRows, [])], nextToAdd: null })
+      setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
     }
     if (food === snake.body[0]) {
       updateScore()
       snake.body.push(snake.nextToAdd)
-      setFood(getRandomInt(constants.nCols * constants.nRows, snake.body))
+      setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
     }
 
     return () => { window.removeEventListener('keydown', controlSnake) }
@@ -185,7 +102,7 @@ function App() {
         <Score score={score}></Score>
       </Container>
       <Container style={style.containerGrid}>
-        <Grid nRows={constants.nRows} nCols={constants.nCols} snake={snake} food={food} />
+        <Grid nRows={utils.nRows} nCols={utils.nCols} snake={snake} food={food} />
       </Container>
     </>
   )
