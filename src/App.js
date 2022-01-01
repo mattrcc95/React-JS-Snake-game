@@ -14,7 +14,7 @@ function App() {
   const [score, setScore] = useState({ current: 0, best: 0 })
   const [activeKey, setActiveKey] = useState(null)
 
-  const resetAll = ()  =>{
+  const resetAll = () => {
     storeBestScoreAndReset();
     setSnake({ body: [utils.getRandomInt(utils.nCols * utils.nRows, [])], nextToAdd: null });
     setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body));
@@ -22,10 +22,11 @@ function App() {
   }
 
   const updateScore = () => {
+    const scoreComputed = utils.scoreCalculator(snake.body)
     if (score.current >= score.best) {
-      setScore({ current: score.current + 1, best: score.current + 1 })
+      setScore({ current: score.current + scoreComputed, best: score.current + scoreComputed })
     } else {
-      setScore({ current: score.current + 1, best: score.best })
+      setScore({ current: score.current + scoreComputed, best: score.best })
     }
   }
 
@@ -63,9 +64,6 @@ function App() {
 
 
   const controlSnake = (event) => {
-    if (event.key !== activeKey) { 
-      setActiveKey(event.key) 
-    }
     switch (event.key) {
       case 'ArrowLeft':
         moveSnake(utils.leftBoundary, - 1, (utils.nCols - 1))
@@ -84,6 +82,13 @@ function App() {
     }
   }
 
+  const eventHandler = (event) => {
+    if (event.key !== activeKey) {
+      setActiveKey(event.key)
+      controlSnake(event)
+    }
+  }
+
   useEffect(() => {
     const retrieved = sessionStorage.getItem(utils.SCORE_KEY)
     if (retrieved) {
@@ -92,29 +97,26 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (timeoutId) { clearTimeout(timeoutId) }
-    window.addEventListener('keydown', controlSnake)
-
     const [first, ...rest] = snake.body
-    if (rest.includes(first)) {
-      resetAll();
+    if (timeoutId) { clearTimeout(timeoutId) }
+    if (rest.includes(first)) { resetAll() }
+
+    window.addEventListener('keydown', eventHandler)
+
+    if (activeKey !== null) {
+      timeoutId = setTimeout(function () {
+        controlSnake(new KeyboardEvent('keydown', { 'key': activeKey }))
+      }, utils.speed(snake.body))
     }
+
     if (food === first) {
       updateScore()
       snake.body.push(snake.nextToAdd)
       setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
     }
 
-    return () => { window.removeEventListener('keydown', controlSnake) }
-  }, [snake])
+    return () => { window.removeEventListener('keydown', eventHandler)}
 
-  useEffect(() => {
-    if (activeKey !== null) {
-      console.log(activeKey)
-      timeoutId = setTimeout(function () {
-        controlSnake(new KeyboardEvent('keydown', { 'key': activeKey }))
-      }, 300)
-    }
   }, [snake])
 
   return (

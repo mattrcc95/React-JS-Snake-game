@@ -1,5 +1,5 @@
-export const nRows = 10
-export const nCols = 10
+export const nRows = 15
+export const nCols = 15
 export const upperBoundary = Array.from({ length: nCols }, (_value, index) => (index + 1))
 export const bottomBoundary = upperBoundary.map(value => value + nCols * (nRows - 1))
 export const rightBoundary = Array.from({ length: nRows }, (_value, index) => (index + 1) * nCols)
@@ -15,4 +15,28 @@ export const getRandomInt = (max, excluded) => {
         }
     }
     return result
+}
+
+export const speed = (arr) => {
+    if(arr.length < 5){
+        return 250
+    } else if (arr.length < 10) {
+        return 150
+    } else if (arr.length < 20) {
+        return 100
+    } else {
+        return 80
+    }
+}
+
+export const scoreCalculator = (arr) => {
+    if(arr.length < 10){
+        return 1
+    } else if (arr.length < 20){
+        return 2
+    } else if (arr.length < 40) {
+        return 4
+    } else {
+        return 8
+    }
 }

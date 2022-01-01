@@ -26,8 +26,8 @@ export const containerGrid = {
     display: 'grid',
     paddingTop: '10vh',
     margin: 'auto',
-    gridTemplateColumns: 'repeat(10, 1fr)',
-    gridTemplateRows: 'repeat(10, 1fr)'
+    gridTemplateColumns: 'repeat(15, 1fr)',
+    gridTemplateRows: 'repeat(15, 1fr)'
   }
 
   export const regularSquare = {
