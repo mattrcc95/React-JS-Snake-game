@@ -1,13 +1,33 @@
 import 'bootstrap/dist/css/bootstrap.css';
 
+export const scoreGrid = {
+    maxWidth: '30vw',
+    minHeight: '10vh',
+    display: 'grid',
+    paddingTop: '5vh',
+    margin: 'auto',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateRows: 'repeat(1, 1fr)',
+    columnGap: '10%'
+}
+
+export const scoreSquare = {
+    background: '#F0F8FF',
+    display: 'grid',
+    boxSizing: 'border-box',
+    border: '3px solid #F0F8FF ',
+    textAlign: 'center',
+    borderRadius: '15px',
+}
+
 export const containerGrid = {
     maxWidth: '30vw',
     minHeight: '75vh',
     display: 'grid',
-    paddingTop: '20vh',
+    paddingTop: '10vh',
     margin: 'auto',
-    gridTemplateColumns: 'repeat(10, 1fr)',
-    gridTemplateRows: 'repeat(10, 1fr)'
+    gridTemplateColumns: 'repeat(15, 1fr)',
+    gridTemplateRows: 'repeat(15, 1fr)'
   }
 
   export const regularSquare = {
@@ -18,8 +38,8 @@ export const containerGrid = {
     textAlign: 'center'
 }
 
-export const bodySquare = {
-    background: '#FF7F50',
+export const snakeSquare = {
+    background: '#FF8C00',
     display: 'grid',
     boxSizing: 'border-box',
     border: '2px solid #000000 ',
