@@ -10,12 +10,12 @@ export const defaultLeftRight = 1
 export const defaultUpDown = nRows
 export const SCORE_KEY = 'SCORE_KEY'
 
-export const getRandomInt = (max, ...excluded) => {
+export const getRandomInt = (max, excluded) => {
     const value = 1 + Math.floor(Math.random() * max)
     if (!excluded.includes(value)) {
       return value
     } else {
-      return getRandomInt(max, ...excluded)
+      return getRandomInt(max, excluded)
     }
   }
 
