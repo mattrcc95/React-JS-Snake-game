@@ -12,7 +12,14 @@ function App() {
   const [snake, setSnake] = useState({ body: [utils.getRandomInt(utils.nRows * utils.nCols, [])], nextToAdd: null })
   const [food, setFood] = useState(utils.getRandomInt(utils.nRows * utils.nCols, snake.body))
   const [score, setScore] = useState({ current: 0, best: 0 })
-  const [impulses, setImpulses] = useState([])
+  const [activeKey, setActiveKey] = useState(null)
+
+  const resetAll = ()  =>{
+    storeBestScoreAndReset();
+    setSnake({ body: [utils.getRandomInt(utils.nCols * utils.nRows, [])], nextToAdd: null });
+    setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body));
+    setActiveKey(null);
+  }
 
   const updateScore = () => {
     if (score.current >= score.best) {
@@ -56,8 +63,8 @@ function App() {
 
 
   const controlSnake = (event) => {
-    if (event.key != impulses[impulses.length - 1]) {
-      impulses.push(event.key)
+    if (event.key !== activeKey) { 
+      setActiveKey(event.key) 
     }
     switch (event.key) {
       case 'ArrowLeft':
@@ -83,38 +90,33 @@ function App() {
       setScore({ current: 0, best: JSON.parse(retrieved) })
     }
   }, [])
-  
+
   useEffect(() => {
-    if(timeoutId){
-      clearTimeout(timeoutId)
-    }
+    if (timeoutId) { clearTimeout(timeoutId) }
     window.addEventListener('keydown', controlSnake)
-    
+
     const [first, ...rest] = snake.body
     if (rest.includes(first)) {
-      storeBestScoreAndReset()
-      setSnake({ body: [utils.getRandomInt(utils.nCols * utils.nRows, [])], nextToAdd: null })
-      setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
-      setImpulses([])
+      resetAll();
     }
     if (food === first) {
       updateScore()
       snake.body.push(snake.nextToAdd)
       setFood(utils.getRandomInt(utils.nCols * utils.nRows, snake.body))
     }
-    
+
     return () => { window.removeEventListener('keydown', controlSnake) }
   }, [snake])
-  
+
   useEffect(() => {
-    if (impulses[impulses.length - 1] !== undefined) {
-      console.log(impulses[impulses.length - 1])
+    if (activeKey !== null) {
+      console.log(activeKey)
       timeoutId = setTimeout(function () {
-        controlSnake(new KeyboardEvent('keydown', { 'key': impulses[impulses.length - 1] }))
+        controlSnake(new KeyboardEvent('keydown', { 'key': activeKey }))
       }, 300)
     }
   }, [snake])
-  
+
   return (
     <>
       <Container style={style.scoreGrid}>
@@ -125,7 +127,6 @@ function App() {
       </Container>
     </>
   )
-
 }
 
 export default App;
